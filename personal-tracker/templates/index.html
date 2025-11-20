@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Notlar{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Notlarınız ve Fatura Kayıtlarınız</h1>
+
+    {% if current_user.is_authenticated %}
+        
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">Yeni Not Ekle</div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_note') }}">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="title" placeholder="Not Başlığı (Örn: Elektrik Faturası)" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" name="content" rows="3" placeholder="Not İçeriği (Örn: Son Ödeme Tarihi 25.04.2025)" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Kaydet</button>
+                </form>
+            </div>
+        </div>
+        
+        {% if notes %}
+            <h2 class="mt-5">Kayıtlı Notlar (Toplam: {{ notes|length }})</h2>
+            <div class="list-group">
+                {% for note in notes %}
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+                    <div class="me-auto">
+                        <h5 class="mb-1">{{ note.title }}</h5>
+                        <p class="mb-1 text-muted">{{ note.content }}</p>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('delete_note', note_id=note.id) }}" class="btn btn-sm btn-danger" 
+                           onclick="return confirm('Bu notu silmek istediğinize emin misiniz?');">
+                           Sil
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info mt-5">Henüz hiç notunuz yok. Yukarıdaki formu kullanarak bir not ekleyebilirsiniz.</div>
+        {% endif %}
+
+    {% else %}
+        <div class="p-5 mb-4 bg-light rounded-3">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">Hoş Geldiniz!</h1>
+                <p class="col-md-8 fs-4">Kişisel notlarınızı ve faturalarınızı güvenle takip etmek için lütfen giriş yapın veya yeni bir hesap oluşturun.</p>
+                <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}" role="button">Hemen Kayıt Ol</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
